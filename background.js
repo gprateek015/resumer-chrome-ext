@@ -45,10 +45,10 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       });
       const url = URL.createObjectURL(pdfBlob);
 
-      // chrome.downloads.download({
-      //   url: url,
-      //   filename: 'Resume.pdf'
-      // });
+      chrome.downloads.download({
+        url: url,
+        filename: 'Resume.pdf'
+      });
     } else if (message.action === 'getJobDescription') {
       console.log('message', message);
 

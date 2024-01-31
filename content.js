@@ -20,6 +20,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === 'extractJobDescription') {
     const jobDescription = extractJobDescription();
 
-    sendResponse({ jobDescription: 'sldkjlksjlksd flk' });
+    sendResponse({ jobDescription });
   }
 });

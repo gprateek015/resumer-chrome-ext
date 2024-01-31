@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "Dr. Resume",
+  "version": "1.0",
+  "description": "Download best talored resume for a job description",
+  "permissions": ["activeTab", "downloads", "http://*/*", "https://*/*"],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  }
+}

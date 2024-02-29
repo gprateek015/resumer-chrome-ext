@@ -86,7 +86,8 @@
   margin-right: 20px;
 }
 
-.visit-now-btn {
+.visit-now-btn,
+.download-btn {
   display: inline-flex;
   padding: 8px 26px 7px 26px;
   justify-content: center;
@@ -104,6 +105,7 @@
   font-weight: 400;
   line-height: 14px; /* 100% */
   border: none;
+  cursor: pointer;
 }
 
 .footer {

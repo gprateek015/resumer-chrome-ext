@@ -1,13 +1,11 @@
-const AUTH_TOKEN =
-  'eyJhbGciOiJIUzI1NiJ9.NjVjYjc3NThlMDQyYjhkZDdmZWJkNGVk.zrDkOe04Cqb4j_5654ZzXrGmAaTHExhTx9apItl2yh0';
 const API_URL = 'https://api.resumer.cloud';
+// const API_URL = 'http://localhost:8000';
 
 const fetchResumeData = async ({ job_description }) => {
   const getResumeDataApiUrl = `${API_URL}/resume/data-new?rewrite=${!!job_description?.length}`;
   const resp = await fetch(getResumeDataApiUrl, {
     method: 'POST',
     headers: {
-      authorization: AUTH_TOKEN,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ job_description })
@@ -22,7 +20,6 @@ const fetchPdfArray = async ({ resumeData }) => {
     method: 'POST',
     body: JSON.stringify(resumeData),
     headers: {
-      authorization: AUTH_TOKEN,
       'Content-Type': 'application/json'
     }
   });

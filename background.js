@@ -1,5 +1,5 @@
-const API_URL = 'https://api.resumer.cloud';
-// const API_URL = 'http://localhost:8000';
+// const API_URL = 'https://api.resumer.cloud';
+const API_URL = 'http://localhost:8000';
 
 const fetchResumeData = async ({ job_description }) => {
   const getResumeDataApiUrl = `${API_URL}/resume/data-new?rewrite=${!!job_description?.length}`;
@@ -16,9 +16,18 @@ const fetchResumeData = async ({ job_description }) => {
 
 const fetchPdfArray = async ({ resumeData }) => {
   const apiUrl = `${API_URL}/resume/engineering/0/load`;
+
+  const data = {
+    ...resumeData,
+    technical_skills: data.technical_skills?.map(skill => skill.name),
+    core_subjects: data.core_subjects?.map(skill => skill.name),
+    dev_tools: data.dev_tools?.map(skill => skill.name),
+    languages: data.languages?.map(skill => skill.name)
+  };
+
   const response = await fetch(apiUrl, {
     method: 'POST',
-    body: JSON.stringify(resumeData),
+    body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json'
     }

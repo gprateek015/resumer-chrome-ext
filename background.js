@@ -108,7 +108,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       }
 
       function trimJobDescription(value) {
-        // return value.slice(value.find('About the job'));
         let resp = value.slice(value.indexOf('About the job'));
         const regexPattern =
           /Qualifications\s+(\d+)\s+of\s+(\d+)\s+skills\s+match\s+your\s+profile/;
@@ -122,7 +121,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
           return slicedString;
         } else {
-          return slicedString;
+          return resp;
         }
       }
     }

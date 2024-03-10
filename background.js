@@ -19,10 +19,10 @@ const fetchPdfArray = async ({ resumeData }) => {
 
   const data = {
     ...resumeData,
-    technical_skills: data.technical_skills?.map(skill => skill.name),
-    core_subjects: data.core_subjects?.map(skill => skill.name),
-    dev_tools: data.dev_tools?.map(skill => skill.name),
-    languages: data.languages?.map(skill => skill.name)
+    technical_skills: resumeData.technical_skills?.map(skill => skill.name),
+    core_subjects: resumeData.core_subjects?.map(skill => skill.name),
+    dev_tools: resumeData.dev_tools?.map(skill => skill.name),
+    languages: resumeData.languages?.map(skill => skill.name)
   };
 
   const response = await fetch(apiUrl, {
@@ -109,8 +109,9 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
       function trimJobDescription(value) {
         let resp = value.slice(value.indexOf('About the job'));
-        const regexPattern =
-          /Qualifications\s+(\d+)\s+of\s+(\d+)\s+skills\s+match\s+your\s+profile/;
+        const regexPattern = /match your profile/;
+        // const regexPattern =
+        //   /Qualifications\s+(\d+)\s+of\s+(\d+)\s+skills\s+match\s+your\s+profile/;
         const match = resp.match(regexPattern);
         if (match) {
           // Get the starting position of the match

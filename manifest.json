@@ -1,20 +1,25 @@
 {
   "manifest_version": 3,
   "name": "Resumer",
-  "version": "2.0",
-  "description": "Download the most ATS friendly resume for any job description",
-  "permissions": ["activeTab", "downloads"],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon-48.png"
-  },
+  "version": "1.0",
+  "description": "Download best tailored resume for a job description",
+  "permissions": ["activeTab", "downloads", "scripting"],
+  "host_permissions": ["http://*/*", "https://*/*"],
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "action": {
+    "default_title": "Resumer",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
     }
-  ]
+  }
 }

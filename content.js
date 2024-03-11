@@ -1,5 +1,3 @@
-// content.js
-
 function extractJobDescription() {
   // const keywords = ['job description', 'job requirements', 'other keyword'];
 
@@ -23,3 +21,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     sendResponse({ jobDescription });
   }
 });
+
+// Manifest V3 content script injection
+if (typeof chrome.scripting !== 'undefined') {
+  chrome.scripting.executeScript({
+    target: { tabId: sender.tab.id },
+    function: extractJobDescription
+  });
+}

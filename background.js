@@ -53,20 +53,28 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       console.log('message', message);
 
       // Request job description from content script
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.query({ active: true, currentWindow: true })
+      .then((tabs) => {
         const activeTab = tabs[0];
-        chrome.tabs.sendMessage(
-          activeTab.id,
-          { action: 'extractJobDescription' },
-          function (response) {
-            console.log('response', response);
-            // Send the job description to the popup
-            chrome.runtime.sendMessage({
-              action: 'jobDescriptionUpdated',
-              job_description: response.jobDescription
-            });
+        return chrome.scripting.executeScript({
+          target: { tabId: activeTab.id },
+          function: () => {
+            const jobDescription = document.querySelector('#job-description').innerText;
+            return { jobDescription };
           }
-        );
+        });
+      })
+      .then((results) => {
+        const response = results[0].result;
+        console.log('response', response);
+        // Send the job description to the popup
+        chrome.runtime.sendMessage({
+          action: 'jobDescriptionUpdated',
+          job_description: response.jobDescription
+        });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
       });
     }
   } catch (err) {

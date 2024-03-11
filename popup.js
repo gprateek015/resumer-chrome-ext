@@ -21,5 +21,6 @@ document.getElementById('download-button').addEventListener('click', () => {
 });
 
 document.getElementById('signup-button').addEventListener('click', () => {
-  window.location = 'localhost:3000';
+  // Open a new tab for sign-up page
+  chrome.tabs.create({ url: 'https:/localhost:3000' });
 });

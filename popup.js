@@ -39,16 +39,18 @@ document.addEventListener('DOMContentLoaded', function () {
 function getDocumentInfo() {
   let elements;
   let host = window.location.host;
-
+  let platform = '';
   // Check the host to determine the appropriate class name
   if (host.includes('linkedin')) {
     elements = document.getElementsByClassName(
       'jobs-search__job-details--wrapper'
     );
+    platform = 'linkedin';
   } else if (host.includes('glassdoor')) {
     elements = document.getElementsByClassName(
-      'JobDetails_jobDescriptionWrapper__BTDTA'
+      'JobDetails_jobDescription__uW_fK'
     );
+    platform = 'glassdoor';
   } else {
     // Handle other hosts or provide a default class name
     elements = document.getElementsByClassName('default-class-name');
@@ -62,7 +64,7 @@ function getDocumentInfo() {
   }
 
   chrome.runtime.sendMessage(
-    { method: 'set', value: plainTextContents },
+    { method: 'set', value: plainTextContents, platform },
     msg => {
       console.log(msg);
     }

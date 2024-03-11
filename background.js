@@ -80,7 +80,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       console.log(message);
       switch (message.method) {
         case 'set':
-          value = trimJobDescription(message.value[0]);
+          value = trimJobDescription(message.value[0], message.platform);
           console.log(value);
           sendResponse({ value: null });
           break;
@@ -107,22 +107,27 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         value = 'Error: Document information could not be obtained.';
       }
 
-      function trimJobDescription(value) {
-        let resp = value.slice(value.indexOf('About the job'));
-        const regexPattern = /match your profile/;
-        // const regexPattern =
-        //   /Qualifications\s+(\d+)\s+of\s+(\d+)\s+skills\s+match\s+your\s+profile/;
-        const match = resp.match(regexPattern);
-        if (match) {
-          // Get the starting position of the match
-          const matchIndex = match.index;
+      function trimJobDescription(value, platform) {
+        value = value.replace(/\n\n/g, '\n');
+        if (platform === 'linkedin') {
+          let resp = value.slice(value.indexOf('About the job'));
+          const regexPattern = /match your profile/;
+          // const regexPattern =
+          //   /Qualifications\s+(\d+)\s+of\s+(\d+)\s+skills\s+match\s+your\s+profile/;
+          const match = resp.match(regexPattern);
+          if (match) {
+            // Get the starting position of the match
+            const matchIndex = match.index;
 
-          // Slice the string until the starting position of the match
-          const slicedString = resp.slice(0, matchIndex);
+            // Slice the string until the starting position of the match
+            const slicedString = resp.slice(0, matchIndex);
 
-          return slicedString;
+            return slicedString;
+          } else {
+            return resp;
+          }
         } else {
-          return resp;
+          return value;
         }
       }
     }

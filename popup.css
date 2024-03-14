@@ -1,8 +1,8 @@
 .container {
   width: 400px;
   padding: 2px 12px;
-  border: 3px solid #000;
-  border-radius: 4px;
+  border: 3px solid #000000;
+  border-radius: 8px;
 }
 
 .heading {
@@ -28,7 +28,7 @@
   justify-content: center;
   gap: 8px;
   border-radius: 4px;
-  background: #000;
+  background: #002147;
 }
 
 .subheading {
@@ -71,15 +71,13 @@
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  background: #000;
-  color: #fff;
+  border: 1px solid #000;
   text-align: center;
   font-family: Righteous;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 14px; /* 100% */
-  border: none;
+  line-height: 14px;
   margin-right: 20px;
 }
 
@@ -91,15 +89,13 @@
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  background: #000;
-  color: #fff;
+  border: 1px solid #000;
   text-align: center;
   font-family: Righteous;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 14px; /* 100% */
-  border: none;
+  line-height: 14px;
   cursor: pointer;
 }
 

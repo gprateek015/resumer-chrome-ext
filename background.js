@@ -1,8 +1,8 @@
-// const API_URL = 'https://api.resumer.cloud';
-const API_URL = 'http://localhost:8000';
+const API_URL = 'https://api.resumer.cloud';
+// const API_URL = 'http://localhost:8000';
 
 const fetchResumeData = async ({ job_description }) => {
-  const getResumeDataApiUrl = `${API_URL}/resume/data-new?rewrite=${!!job_description?.length}`;
+  const getResumeDataApiUrl = `${API_URL}/resume/data-new?rewrite=${!!job_description}`;
   const resp = await fetch(getResumeDataApiUrl, {
     method: 'POST',
     headers: {
@@ -10,13 +10,18 @@ const fetchResumeData = async ({ job_description }) => {
     },
     body: JSON.stringify({ job_description })
   });
-  if (!resp.ok) throw new Error('Cannot fetch resume data');
-  return resp.json();
+
+  if (!resp.ok) {
+    if (resp.status === 401) {
+      throw new Error('unauthorized');
+    }
+    throw new Error('Cannot fetch resume data');
+  }
+  return await resp.json();
 };
 
 const fetchPdfArray = async ({ resumeData }) => {
   const apiUrl = `${API_URL}/resume/engineering/0/load`;
-
   const data = {
     ...resumeData,
     technical_skills: resumeData.technical_skills?.map(skill => skill.name),
@@ -24,7 +29,6 @@ const fetchPdfArray = async ({ resumeData }) => {
     dev_tools: resumeData.dev_tools?.map(skill => skill.name),
     languages: resumeData.languages?.map(skill => skill.name)
   };
-
   const response = await fetch(apiUrl, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -33,14 +37,19 @@ const fetchPdfArray = async ({ resumeData }) => {
     }
   });
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('unauthorized');
+    }
     throw new Error('Network response was not ok');
   }
-  return response.arrayBuffer();
+  return await response.arrayBuffer();
 };
 
 let value = '';
+let error = '';
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  error = '';
   try {
     if (message.method === 'downloadPDF') {
       const { job_description } = message;
@@ -76,6 +85,9 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         );
       };
       reader.readAsArrayBuffer(blob);
+      chrome.runtime.sendMessage({
+        status: 'success'
+      });
     } else {
       console.log(message);
       switch (message.method) {
@@ -91,29 +103,46 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
           value = '';
           sendResponse({ value: null });
           break;
+        case 'checkError':
+          checkError();
+          break;
       }
       return true;
 
-      async function sendAfterSet() {
+      async function checkError() {
+        console.log('on check error');
         for (let i = 0; i < 10; i++) {
-          if (value != '') {
-            sendResponse({ value: value });
+          if (error !== '') {
+            console.log(error);
+            sendResponse({ error: error });
             return;
           }
           console.log('Start Sleep 1s.');
           await new Promise(s => setTimeout(s, 1000));
           console.log('End Sleep 1s.');
         }
-        value = 'Error: Document information could not be obtained.';
+      }
+
+      async function sendAfterSet() {
+        for (let i = 0; i < 10; i++) {
+          if (value !== '') {
+            sendResponse({ value: value });
+            return;
+          }
+          console.log('Start Sleep 1s.');
+          await new Promise(s => setTimeout(s, 1000));
+          console.log('End Sleep 1s.');
+          if (i === 8)
+            value = 'Error: Document information could not be obtained.';
+        }
       }
 
       function trimJobDescription(value, platform) {
         value = value.replace(/\n\n/g, '\n');
         if (platform === 'linkedin') {
           let resp = value.slice(value.indexOf('About the job'));
-          const regexPattern = /match your profile/;
-          // const regexPattern =
-          //   /Qualifications\s+(\d+)\s+of\s+(\d+)\s+skills\s+match\s+your\s+profile/;
+          const regexPattern = /(match|matches) your profile/;
+
           const match = resp.match(regexPattern);
           if (match) {
             // Get the starting position of the match
@@ -132,6 +161,12 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       }
     }
   } catch (err) {
-    console.error(err);
+    error = err.message;
+    chrome.runtime.sendMessage({
+      status: 'error',
+      error: err.message
+    });
+  } finally {
+    return true;
   }
 });

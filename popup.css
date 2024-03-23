@@ -28,7 +28,12 @@
   justify-content: center;
   gap: 8px;
   border-radius: 4px;
-  background: linear-gradient(90deg, rgb(99, 115, 255), #700fee 50%, rgb(99, 115, 255));
+  background: linear-gradient(
+    90deg,
+    rgb(99, 115, 255),
+    #700fee 50%,
+    rgb(99, 115, 255)
+  );
 }
 
 .subheading {
@@ -64,7 +69,7 @@
   margin-bottom: 15px;
 }
 
-.signin-btn {
+.customize-btn {
   display: inline-flex;
   width: 120px;
   padding: 8px 30px;
@@ -80,6 +85,7 @@
   font-weight: 400;
   line-height: 14px;
   margin-right: 20px;
+  cursor: pointer;
 }
 
 .visit-now-btn,

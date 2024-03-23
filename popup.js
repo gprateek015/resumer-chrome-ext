@@ -3,7 +3,7 @@ document
   .addEventListener('click', async () => {
     const jobDescriptionInput = document.getElementById('job-description');
 
-    document.getElementById('download-button').innerText = 'Processing...';
+    document.getElementById('download-button').innerText = 'Downloading...';
     chrome.runtime.sendMessage({
       method: 'downloadPDF',
       job_description: jobDescriptionInput.value
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         result => {
           if (chrome.runtime.lastError) {
             document.getElementById('job-description').value =
-              'Error: ' + chrome.runtime.lastError.message;
+              'Error: Cannot find job description in this page.';
           } else {
             chrome.runtime.sendMessage({ method: 'get' }, response => {
               document.getElementById('job-description').value = response.value;
@@ -31,6 +31,17 @@ document.addEventListener('DOMContentLoaded', function () {
       );
     });
   });
+});
+
+document.getElementById('signup-button').addEventListener('click', () => {
+  window.open('https://resumer.cloud');
+});
+
+document.getElementById('customize-button').addEventListener('click', () => {
+  const jobDescription = document.getElementById('job-description').value;
+  window.open(
+    `https://resumer.cloud/job-description?jd=${encodeURI(jobDescription)}`
+  );
 });
 
 function getDocumentInfo() {
@@ -50,7 +61,8 @@ function getDocumentInfo() {
     platform = 'glassdoor';
   } else {
     // Handle other hosts or provide a default class name
-    elements = document.getElementsByClassName('default-class-name');
+    elements = document.getElementsByTagName('body');
+    platform = 'other';
   }
 
   let plainTextContents = [];

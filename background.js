@@ -45,6 +45,31 @@ const fetchPdfArray = async ({ resumeData }) => {
   return await response.arrayBuffer();
 };
 
+function findTextAfterKeywords(text, numWords = 2000) {
+  const keywords = ['job description', "what you'll do"];
+  let foundIndices = [];
+
+  text = text.toLowerCase();
+
+  for (let keyword of keywords) {
+    let index = text.indexOf(keyword);
+    if (index !== -1) {
+      foundIndices.push([index, keyword]);
+    }
+  }
+
+  let results = [];
+  for (let indices of foundIndices) {
+    const [index, keyword] = indices;
+    let startIndex = index + keyword.length;
+    let endIndex = startIndex + numWords;
+    let result = text.substring(startIndex, endIndex);
+    results.push(result);
+  }
+
+  return results.join(' ') + '...';
+}
+
 let value = '';
 let error = '';
 
@@ -93,7 +118,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       switch (message.method) {
         case 'set':
           value = trimJobDescription(message.value[0], message.platform);
-          console.log(value);
           sendResponse({ value: null });
           break;
         case 'get':
@@ -138,6 +162,9 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       }
 
       function trimJobDescription(value, platform) {
+        if (!value) {
+          return 'No job description found...';
+        }
         value = value.replace(/\n\n/g, '\n');
         if (platform === 'linkedin') {
           let resp = value.slice(value.indexOf('About the job'));
@@ -155,8 +182,10 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
           } else {
             return resp;
           }
-        } else {
+        } else if (platform === 'glassdoor') {
           return value;
+        } else {
+          return findTextAfterKeywords(value);
         }
       }
     }

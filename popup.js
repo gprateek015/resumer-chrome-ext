@@ -1,3 +1,16 @@
+const disableBtns = () => {
+  const btn = document.getElementById('download-button');
+  const btn2 = document.getElementById('customize-button');
+  btn.setAttribute('disabled', true);
+  btn2.setAttribute('disabled', true);
+};
+const enableBtns = () => {
+  const btn = document.getElementById('download-button');
+  const btn2 = document.getElementById('customize-button');
+  btn.removeAttribute('disabled');
+  btn2.removeAttribute('disabled');
+};
+
 document
   .getElementById('download-button')
   .addEventListener('click', async () => {
@@ -22,15 +35,31 @@ document.addEventListener('DOMContentLoaded', function () {
           if (chrome.runtime.lastError) {
             document.getElementById('job-description').value =
               'Error: Cannot find job description in this page.';
+            disableBtns();
           } else {
             chrome.runtime.sendMessage({ method: 'get' }, response => {
-              document.getElementById('job-description').value = response.value;
+              if (!response.value || response.value === 'NA') {
+                document.getElementById('job-description').value =
+                  'No job description found...';
+                disableBtns();
+              } else {
+                document.getElementById('job-description').value =
+                  response.value;
+              }
             });
           }
         }
       );
     });
   });
+});
+
+document.getElementById('job-description').addEventListener('input', e => {
+  if (!!e.target.value) {
+    enableBtns();
+  } else {
+    disableBtns();
+  }
 });
 
 document.getElementById('signup-button').addEventListener('click', () => {

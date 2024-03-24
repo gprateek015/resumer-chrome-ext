@@ -117,7 +117,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       console.log(message);
       switch (message.method) {
         case 'set':
-          value = trimJobDescription(message.value[0], message.platform);
+          value = trimJobDescription(message.value, message.platform);
           sendResponse({ value: null });
           break;
         case 'get':
@@ -162,9 +162,10 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       }
 
       function trimJobDescription(value, platform) {
-        if (!value) {
-          return 'No job description found...';
+        if (!value.length) {
+          return 'NA';
         }
+        value = value[0];
         value = value.replace(/\n\n/g, '\n');
         if (platform === 'linkedin') {
           let resp = value.slice(value.indexOf('About the job'));
